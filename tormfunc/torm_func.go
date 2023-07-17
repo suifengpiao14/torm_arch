@@ -16,7 +16,7 @@ import (
 
 const IN_INDEX = "__inIndex"
 
-var tormfuncMapSQL = template.FuncMap{
+var TormfuncMapSQL = template.FuncMap{
 	"zeroTime":      ZeroTime,
 	"currentTime":   CurrentTime,
 	"permanentTime": PermanentTime,
