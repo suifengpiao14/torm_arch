@@ -115,20 +115,21 @@ type LogInfoCURL struct {
 	Out     string `json:"out"`
 	Err     error  `json:"error"`
 	Level   string `json:"level"`
+	logchan.EmptyLogInfo
 }
 
-func (l LogInfoCURL) GetName() logchan.LogName {
+func (l *LogInfoCURL) GetName() logchan.LogName {
 	return LOG_INFO_CURL
 }
-func (l LogInfoCURL) Error() error {
+func (l *LogInfoCURL) Error() error {
 	return l.Err
 }
-func (l LogInfoCURL) GetLevel() string {
+func (l *LogInfoCURL) GetLevel() string {
 	return l.Level
 }
 
 func CURLRaw(cfg *CURLConfig, httpRaw string) (out string, err error) {
-	logInfo := LogInfoCURL{
+	logInfo := &LogInfoCURL{
 		HttpRaw: httpRaw,
 		Level:   cfg.LogLevel,
 	}

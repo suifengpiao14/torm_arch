@@ -35,21 +35,22 @@ type LogInfoExecTpl struct {
 	NamedSQL string          `json:"namedSql"`
 	Err      error           `json:"error"`
 	Level    string          `json:"level"`
+	logchan.EmptyLogInfo
 }
 
-func (l LogInfoExecTpl) GetName() logchan.LogName {
+func (l *LogInfoExecTpl) GetName() logchan.LogName {
 	return LOG_INFO_EXEC_TEMPLATE
 }
-func (l LogInfoExecTpl) Error() error {
+func (l *LogInfoExecTpl) Error() error {
 	return l.Err
 }
-func (l LogInfoExecTpl) GetLevel() string {
+func (l *LogInfoExecTpl) GetLevel() string {
 	return l.Level
 }
 
 func ExecTPL(t *template.Template, tplName string, volume VolumeInterface) (namedSQL string, resetedVolume VolumeInterface, err error) {
 	var b bytes.Buffer
-	logInfo := LogInfoExecTpl{
+	logInfo := &LogInfoExecTpl{
 		TplName: tplName,
 		Volume:  volume,
 	}

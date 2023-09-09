@@ -52,8 +52,8 @@ github.com/suifengpiao14/funcs v0.0.3 h1:dqfsV3QKvSx3vfwxpwPdfLiA//x7Gd3EJ+wkmlb
 github.com/suifengpiao14/funcs v0.0.3/go.mod h1:gujdeedgAeiM+AE3seHJR2RSTwiIzEogNQSyZ9YbHQA=
 github.com/suifengpiao14/glob v0.0.1 h1:8b6zCnh3kQsHgZ0hAvwxTu/3I8SQo0EyLAvTGZY2jlg=
 github.com/suifengpiao14/glob v0.0.1/go.mod h1:TIU/uxdBBmpuGqK1FA6LjeOrGX5GdOjU1lci5WdN4EA=
-github.com/suifengpiao14/logchan/v2 v2.0.12 h1:bfQY/DMj3EXzMS42DOZbdxKgz+UuoCvThMtnrRciSI8=
-github.com/suifengpiao14/logchan/v2 v2.0.12/go.mod h1:c2DmWbatHcQhLZu1ZiKfMa5B7UFa9APSDqSkTiPBO/4=
+github.com/suifengpiao14/logchan/v2 v2.0.13 h1:XAsOUTMh6QauVEnb26U+9OkmkmHgk8HlMZINIE2z02Y=
+github.com/suifengpiao14/logchan/v2 v2.0.13/go.mod h1:c2DmWbatHcQhLZu1ZiKfMa5B7UFa9APSDqSkTiPBO/4=
 github.com/tidwall/gjson v1.14.4 h1:uo0p8EbA09J7RQaflQ1aBRffTR7xedD2bcIVSYxLnkM=
 github.com/tidwall/gjson v1.14.4/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=

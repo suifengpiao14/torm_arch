@@ -85,22 +85,23 @@ type LogInfoToSQL struct {
 	Data      interface{}            `json:"data"`
 	Err       error                  `json:"error"`
 	Level     string                 `json:"level"`
+	logchan.EmptyLogInfo
 }
 
-func (l LogInfoToSQL) GetName() logchan.LogName {
+func (l *LogInfoToSQL) GetName() logchan.LogName {
 	return LOG_INFO_SQL
 }
-func (l LogInfoToSQL) Error() error {
+func (l *LogInfoToSQL) Error() error {
 	return l.Err
 }
-func (l LogInfoToSQL) GetLevel() string {
+func (l *LogInfoToSQL) GetLevel() string {
 	return l.Level
 }
 
 // ToSQL 将字符串、数据整合为sql
 func ToSQL(namedSql string, data interface{}) (sql string, err error) {
 	namedSql = pkg.StandardizeSpaces(pkg.TrimSpaces(namedSql)) // 格式化sql语句
-	logInfo := LogInfoToSQL{
+	logInfo := &LogInfoToSQL{
 		Named: namedSql,
 		Data:  data,
 		Err:   err,
