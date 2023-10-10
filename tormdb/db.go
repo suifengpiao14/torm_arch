@@ -69,8 +69,6 @@ const (
 	SQL_TYPE_OTHER  = "OTHER"
 )
 
-type any = interface{}
-
 // SQLType 判断 sql  属于那种类型
 func SQLType(sqls string) string {
 	sqlArr := strings.Split(sqls, tormfunc.EOF)
