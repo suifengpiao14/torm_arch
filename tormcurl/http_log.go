@@ -38,7 +38,7 @@ func (h *LogInfoHttp) BeforSend() {
 }
 
 //DefaultPrintHttpLogInfo 默认日志打印函数
-func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName LogName, err error) {
+func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName logchan.LogName, err error) {
 	if typeName != LogInfoNameHttp {
 		return
 	}
