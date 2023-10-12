@@ -8,14 +8,13 @@ import (
 )
 
 //DoHttpWithLogInfo 包装http请求，记录日志,do 报错后 ,resp 可能为空，所有将req调整为入参，方便记录请求数据
-func DoHttpWithLogInfo(req *http.Request, do func() (resp *http.Response, responseBody []byte, err error)) {
+func DoHttpWithLogInfo(req *http.Request, do func() (resp *http.Response, responseBody []byte, err error)) (err error) {
 	var requestBody []byte
-	var err error
 	bodyReader, _ := req.GetBody()
 	if bodyReader != nil {
 		requestBody, err = io.ReadAll(bodyReader)
 		if err != nil {
-			return
+			return err
 		}
 	}
 	httpLogInfo := LogInfoHttp{
@@ -35,5 +34,6 @@ func DoHttpWithLogInfo(req *http.Request, do func() (resp *http.Response, respon
 	if resp != nil {
 		httpLogInfo.ResponseHeader = resp.Header.Clone()
 	}
+	return err
 
 }
