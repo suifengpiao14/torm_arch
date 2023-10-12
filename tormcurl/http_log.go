@@ -1,28 +1,32 @@
 package tormcurl
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"net/http"
-	"strings"
 
 	"github.com/suifengpiao14/logchan/v2"
+	"moul.io/http2curl"
 )
 
 const (
 	LogInfoNameHttp LogName = "HttpLogInfo"
 )
 
+//LogInfoHttp 发送日志，只需填写 Request(GetRequest),Response 和RequestBody,其余字段会在BeforSend自动填充
 type LogInfoHttp struct {
-	Name           string      `json:"name"`
-	Method         string      `json:"method"`
-	Url            string      `json:"url"`
-	RequestHeader  http.Header `json:"requestHeader"`
-	RequestBody    string      `json:"requestBody"`
-	ResponseHeader http.Header `json:"responseHeader"`
-	ResponseBody   string      `json:"responseBody"`
-	CurlCmd        string      `json:"curlCmd"`
+	Name           string         `json:"name"`
+	Request        *http.Request  `json:"-"`
+	Response       *http.Response `json:"-"`
+	Method         string         `json:"method"`
+	Url            string         `json:"url"`
+	RequestHeader  http.Header    `json:"requestHeader"`
+	RequestBody    string         `json:"requestBody"`
+	ResponseHeader http.Header    `json:"responseHeader"`
+	ResponseBody   string         `json:"responseBody"`
+	CurlCmd        string         `json:"curlCmd"`
 	Err            error
+	GetRequest     func() (request *http.Request) //go-resty/resty/v2 RawRequest 一开始为空，提供函数延迟实现
 	logchan.EmptyLogInfo
 }
 
@@ -33,8 +37,42 @@ func (h *LogInfoHttp) GetName() (logName logchan.LogName) {
 func (h *LogInfoHttp) Error() (err error) {
 	return err
 }
+
+// 简化发送方赋值
 func (h *LogInfoHttp) BeforSend() {
-	h.CurlCmd, _ = h.CURLCli() // 此处的err不能影响业务error
+	if h.GetRequest != nil {
+		h.Request = h.GetRequest() // 优先使用延迟获取
+	}
+	req := h.Request
+	resp := h.Response
+	if req == nil && resp != nil && resp.Request != nil {
+		h.Request = resp.Request
+		req = resp.Request
+	}
+	if req != nil {
+		var requestBody []byte
+		bodyReader, _ := req.GetBody()
+		if bodyReader != nil {
+			requestBody, _ = io.ReadAll(bodyReader)
+
+		}
+		h.Method = req.Method
+		h.Url = req.URL.String()
+		h.RequestBody = string(requestBody)
+		h.RequestHeader = req.Header.Clone()
+		curlCommand, err := http2curl.GetCurlCommand(h.Request)
+		if err != nil {
+			h.CurlCmd = curlCommand.String()
+		}
+	}
+
+	if resp != nil {
+		if resp.Body != nil {
+			responseBody, _ := io.ReadAll(resp.Body)
+			h.ResponseBody = string(responseBody)
+		}
+		h.ResponseHeader = resp.Header.Clone()
+	}
 }
 
 //DefaultPrintHttpLogInfo 默认日志打印函数
@@ -47,24 +85,8 @@ func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName logchan
 		return
 	}
 	if err != nil {
-		fmt.Fprintf(logchan.LogWriter, "loginInfo:%s,error:%s", httpLogInfo.GetName(), err.Error())
+		fmt.Fprintf(logchan.LogWriter, "loginInfo:%s,error:%s\n", httpLogInfo.GetName(), err.Error())
 		return
 	}
-	curlcmd, _ := httpLogInfo.CURLCli()
-	fmt.Fprintf(logchan.LogWriter, "curl:%s", curlcmd)
-}
-
-// CURLCli 生成curl 命令
-func (h LogInfoHttp) CURLCli() (curlCli string, err error) {
-	var w bytes.Buffer
-	w.WriteString(fmt.Sprintf("curl -X%s", strings.ToUpper(h.Method)))
-	for k, v := range h.RequestHeader {
-		w.WriteString(fmt.Sprintf(` -H '%s:%v'`, k, v))
-	}
-	if h.RequestBody != "" {
-		w.WriteString(fmt.Sprintf(` -d '%s'`, h.RequestBody))
-	}
-	w.WriteString(fmt.Sprintf(`'%s'`, h.Url))
-	curlCli = w.String()
-	return curlCli, nil
+	fmt.Fprintf(logchan.LogWriter, "curl:%s\n", httpLogInfo.CurlCmd)
 }

@@ -68,7 +68,7 @@ const (
 )
 
 //DefaultPrintLogInfoEXECSQL 默认日志打印函数
-func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName LogName, err error) {
+func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName logchan.LogName, err error) {
 	if typeName != LOG_INFO_EXEC_SQL {
 		return
 	}
