@@ -58,7 +58,7 @@ func (l *LogInfoEXECSQL) Error() error {
 func (l *LogInfoEXECSQL) GetLevel() string {
 	return l.Level
 }
-func (l *LogInfoEXECSQL) BeforSend() {
+func (l *LogInfoEXECSQL) BeforeSend() {
 	duration := float64(l.EndAt.Sub(l.BeginAt).Nanoseconds()) / 1e6
 	l.Duration = fmt.Sprintf("%.3fms", duration)
 }

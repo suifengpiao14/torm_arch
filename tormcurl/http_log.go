@@ -1,9 +1,11 @@
 package tormcurl
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/suifengpiao14/logchan/v2"
 	"moul.io/http2curl"
@@ -39,7 +41,7 @@ func (h *LogInfoHttp) Error() (err error) {
 }
 
 // 简化发送方赋值
-func (h *LogInfoHttp) BeforSend() {
+func (h *LogInfoHttp) BeforeSend() {
 	if h.GetRequest != nil {
 		h.Request = h.GetRequest() // 优先使用延迟获取
 	}
@@ -50,26 +52,33 @@ func (h *LogInfoHttp) BeforSend() {
 		req = resp.Request
 	}
 	if req != nil {
-		var requestBody []byte
-		bodyReader, _ := req.GetBody()
-		if bodyReader != nil {
-			requestBody, _ = io.ReadAll(bodyReader)
+		bodyReader, err := req.GetBody()
+		if err == nil {
+			body, err := io.ReadAll(bodyReader)
+			if err == nil {
+				h.RequestBody = string(body)
+				contentType := req.Header.Get("Content-type")              //"multipart/form-data; boundary=39c610d0ba0041b90dad8f1d477a6c3dfde830e124274c9972d2668c52db"
+				if !strings.Contains(contentType, "multipart/form-data") { // 上传文件时屏蔽body，因为太大了
+					req.Body = io.NopCloser(bytes.NewReader(body))
+				}
+			}
 
 		}
 		h.Method = req.Method
 		h.Url = req.URL.String()
-		h.RequestBody = string(requestBody)
 		h.RequestHeader = req.Header.Clone()
 		curlCommand, err := http2curl.GetCurlCommand(h.Request)
-		if err != nil {
+		if err == nil {
 			h.CurlCmd = curlCommand.String()
 		}
 	}
 
 	if resp != nil {
 		if resp.Body != nil {
-			responseBody, _ := io.ReadAll(resp.Body)
-			h.ResponseBody = string(responseBody)
+			responseBody, err := io.ReadAll(resp.Body)
+			if err == nil {
+				h.ResponseBody = string(responseBody)
+			}
 		}
 		h.ResponseHeader = resp.Header.Clone()
 	}
@@ -89,4 +98,5 @@ func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName logchan
 		return
 	}
 	fmt.Fprintf(logchan.LogWriter, "curl:%s\n", httpLogInfo.CurlCmd)
+	fmt.Fprintf(logchan.LogWriter, "response:%s\n", httpLogInfo.ResponseBody)
 }
