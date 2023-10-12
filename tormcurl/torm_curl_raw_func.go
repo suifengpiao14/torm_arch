@@ -1,4 +1,4 @@
-package templatecurl
+package tormcurl
 
 import (
 	"bufio"
@@ -22,7 +22,7 @@ import (
 
 var CURL_TIMEOUT = 30 * time.Millisecond
 
-type RequestData struct {
+type RequestDTO struct {
 	URL     string         `json:"url"`
 	Method  string         `json:"method"`
 	Header  http.Header    `json:"header"`
@@ -34,7 +34,7 @@ type ResponseData struct {
 	Header      http.Header    `json:"header"`
 	Cookies     []*http.Cookie `json:"cookies"`
 	Body        string         `json:"body"`
-	RequestData *RequestData   `json:"requestData"`
+	RequestData *RequestDTO    `json:"requestData"`
 }
 
 type CURLConfig struct {
@@ -107,10 +107,10 @@ func (l LogName) String() string {
 }
 
 const (
-	LOG_INFO_CURL LogName = "LogInfoCURL"
+	LOG_INFO_CURL_RAW LogName = "LogInfoCURLRaw"
 )
 
-type LogInfoCURL struct {
+type LogInfoCURLRaw struct {
 	HttpRaw string `json:"httpRaw"`
 	Out     string `json:"out"`
 	Err     error  `json:"error"`
@@ -118,18 +118,18 @@ type LogInfoCURL struct {
 	logchan.EmptyLogInfo
 }
 
-func (l *LogInfoCURL) GetName() logchan.LogName {
-	return LOG_INFO_CURL
+func (l *LogInfoCURLRaw) GetName() logchan.LogName {
+	return LOG_INFO_CURL_RAW
 }
-func (l *LogInfoCURL) Error() error {
+func (l *LogInfoCURLRaw) Error() error {
 	return l.Err
 }
-func (l *LogInfoCURL) GetLevel() string {
+func (l *LogInfoCURLRaw) GetLevel() string {
 	return l.Level
 }
 
 func CURLRaw(cfg *CURLConfig, httpRaw string) (out string, err error) {
-	logInfo := &LogInfoCURL{
+	logInfo := &LogInfoCURLRaw{
 		HttpRaw: httpRaw,
 		Level:   cfg.LogLevel,
 	}
@@ -243,14 +243,18 @@ func ReadRequest(httpRaw string) (req *http.Request, err error) {
 	return
 }
 
-func Request2RequestData(req *http.Request) (requestData *RequestData, err error) {
-	requestData = &RequestData{}
-	bodyByte, err := io.ReadAll(req.Body)
+func Request2RequestData(req *http.Request) (requestDTO *RequestDTO, err error) {
+	requestDTO = &RequestDTO{}
+	bodyReader, err := req.GetBody()
+	if err != nil {
+		return nil, err
+	}
+	bodyByte, err := io.ReadAll(bodyReader)
 	if err != nil {
 		return
 	}
 	req.Header.Del("Content-Length")
-	requestData = &RequestData{
+	requestDTO = &RequestDTO{
 		URL:     req.URL.String(),
 		Method:  req.Method,
 		Header:  req.Header,
