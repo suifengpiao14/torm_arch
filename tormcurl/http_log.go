@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	HttpLogInfoName LogName = "HttpLogInfo"
+	LogInfoNameHttp LogName = "HttpLogInfo"
 )
 
-type HttpLogInfo struct {
+type LogInfoHttp struct {
 	Name           string      `json:"name"`
 	Method         string      `json:"method"`
 	Url            string      `json:"url"`
@@ -26,23 +26,23 @@ type HttpLogInfo struct {
 	logchan.EmptyLogInfo
 }
 
-func (h *HttpLogInfo) GetName() (logName logchan.LogName) {
-	return HttpLogInfoName
+func (h *LogInfoHttp) GetName() (logName logchan.LogName) {
+	return LogInfoNameHttp
 }
 
-func (h *HttpLogInfo) Error() (err error) {
+func (h *LogInfoHttp) Error() (err error) {
 	return err
 }
-func (h *HttpLogInfo) BeforSend() {
+func (h *LogInfoHttp) BeforSend() {
 	h.CurlCmd, _ = h.CURLCli() // 此处的err不能影响业务error
 }
 
 //DefaultPrintHttpLogInfo 默认日志打印函数
 func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName LogName, err error) {
-	if typeName != HttpLogInfoName {
+	if typeName != LogInfoNameHttp {
 		return
 	}
-	httpLogInfo, ok := logInfo.(*HttpLogInfo)
+	httpLogInfo, ok := logInfo.(*LogInfoHttp)
 	if !ok {
 		return
 	}
@@ -55,7 +55,7 @@ func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName LogName
 }
 
 // CURLCli 生成curl 命令
-func (h HttpLogInfo) CURLCli() (curlCli string, err error) {
+func (h LogInfoHttp) CURLCli() (curlCli string, err error) {
 	var w bytes.Buffer
 	w.WriteString(fmt.Sprintf("curl -X%s", strings.ToUpper(h.Method)))
 	for k, v := range h.RequestHeader {

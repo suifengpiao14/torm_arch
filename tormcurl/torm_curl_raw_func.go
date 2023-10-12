@@ -47,11 +47,6 @@ type CURLConfig struct {
 	IdleConnTimeout     int    `json:"idleConnTimeout"`
 }
 
-type curlInstance struct {
-	identify string
-	config   CURLConfig
-}
-
 func RegisterCURL(cfg CURLConfig) {
 
 }

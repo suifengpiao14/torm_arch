@@ -3,7 +3,6 @@ package tormdb
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"sync"
 	"time"
@@ -109,8 +108,6 @@ func execOrQueryContextUseGorm(ctx context.Context, gormDB *gorm.DB, sqls string
 	sqlLogInfo := &LogInfoEXECSQL{}
 	defer func() {
 		sqlLogInfo.Err = err
-		duration := float64(sqlLogInfo.EndAt.Sub(sqlLogInfo.BeginAt).Nanoseconds()) / 1e6
-		sqlLogInfo.Duration = fmt.Sprintf("%.3fms", duration)
 		if out != nil {
 			jsonByte, _ := json.Marshal(out)
 			outStr := string(jsonByte)

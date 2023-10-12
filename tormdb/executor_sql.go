@@ -92,8 +92,6 @@ func execOrQueryContext(ctx context.Context, sqlDB *sql.DB, sqls string) (out st
 	sqlLogInfo := &LogInfoEXECSQL{}
 	defer func() {
 		sqlLogInfo.Err = err
-		duration := float64(sqlLogInfo.EndAt.Sub(sqlLogInfo.BeginAt).Nanoseconds()) / 1e6
-		sqlLogInfo.Duration = fmt.Sprintf("%.3fms", duration)
 		logchan.SendLogInfo(sqlLogInfo)
 	}()
 	sqls = pkg.StandardizeSpaces(pkg.TrimSpaces(sqls)) // 格式化sql语句

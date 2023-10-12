@@ -18,7 +18,7 @@ func DoHttpWithLogInfo(req *http.Request, do func() (resp *http.Response, respon
 			return
 		}
 	}
-	httpLogInfo := HttpLogInfo{
+	httpLogInfo := LogInfoHttp{
 		Method:        req.Method,
 		Url:           req.URL.String(),
 		RequestBody:   string(requestBody),

@@ -2,6 +2,7 @@ package tormdb
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -57,10 +58,30 @@ func (l *LogInfoEXECSQL) Error() error {
 func (l *LogInfoEXECSQL) GetLevel() string {
 	return l.Level
 }
+func (l *LogInfoEXECSQL) BeforSend() {
+	duration := float64(l.EndAt.Sub(l.BeginAt).Nanoseconds()) / 1e6
+	l.Duration = fmt.Sprintf("%.3fms", duration)
+}
 
 const (
 	LOG_INFO_EXEC_SQL LogName = "LogInfoEXECSQL"
 )
+
+//DefaultPrintLogInfoEXECSQL 默认日志打印函数
+func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName LogName, err error) {
+	if typeName != LOG_INFO_EXEC_SQL {
+		return
+	}
+	logInfoEXECSQL, ok := logInfo.(*LogInfoEXECSQL)
+	if !ok {
+		return
+	}
+	if err != nil {
+		fmt.Fprintf(logchan.LogWriter, "loginInfo:%s,error:%s", logInfoEXECSQL.GetName(), err.Error())
+		return
+	}
+	fmt.Fprintf(logchan.LogWriter, "%+s [%s rows:%d]", logInfoEXECSQL.SQL, logInfoEXECSQL.Duration, logInfoEXECSQL.AffectedRows)
+}
 
 var DriverName = "mysql"
 
