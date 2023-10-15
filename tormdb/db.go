@@ -67,7 +67,7 @@ const (
 	LOG_INFO_EXEC_SQL LogName = "LogInfoEXECSQL"
 )
 
-//DefaultPrintLogInfoEXECSQL 默认日志打印函数
+// DefaultPrintLogInfoEXECSQL 默认日志打印函数
 func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName logchan.LogName, err error) {
 	if typeName != LOG_INFO_EXEC_SQL {
 		return
@@ -77,10 +77,10 @@ func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName logc
 		return
 	}
 	if err != nil {
-		fmt.Fprintf(logchan.LogWriter, "loginInfo:%s,error:%s", logInfoEXECSQL.GetName(), err.Error())
+		fmt.Fprintf(logchan.LogWriter, "loginInfo:%s,sql:%s,error:%s\n", logInfoEXECSQL.GetName(), logInfoEXECSQL.SQL, err.Error())
 		return
 	}
-	fmt.Fprintf(logchan.LogWriter, "%+s [%s rows:%d]", logInfoEXECSQL.SQL, logInfoEXECSQL.Duration, logInfoEXECSQL.AffectedRows)
+	fmt.Fprintf(logchan.LogWriter, "%+s [%s rows:%d]\n", logInfoEXECSQL.SQL, logInfoEXECSQL.Duration, logInfoEXECSQL.AffectedRows)
 }
 
 var DriverName = "mysql"
