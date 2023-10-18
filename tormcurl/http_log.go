@@ -94,8 +94,14 @@ func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName logchan
 		return
 	}
 	if err != nil {
-		fmt.Fprintf(logchan.LogWriter, "%s|loginInfo:%s|error:%s\n", logchan.DefaultPrintLog(httpLogInfo), httpLogInfo.GetName(), err.Error())
+		_, err1 := fmt.Fprintf(logchan.LogWriter, "%s|loginInfo:%s|error:%s\n", logchan.DefaultPrintLog(httpLogInfo), httpLogInfo.GetName(), err.Error())
+		if err1 != nil {
+			fmt.Printf("err: DefaultPrintHttpLogInfo fmt.Fprintf:%s\n", err1.Error())
+		}
 		return
 	}
-	fmt.Fprintf(logchan.LogWriter, "%s|curl:%s|response:%s\n", logchan.DefaultPrintLog(httpLogInfo), httpLogInfo.CurlCmd, httpLogInfo.ResponseBody)
+	_, err1 := fmt.Fprintf(logchan.LogWriter, "%s|curl:%s|response:%s\n", logchan.DefaultPrintLog(httpLogInfo), httpLogInfo.CurlCmd, httpLogInfo.ResponseBody)
+	if err1 != nil {
+		fmt.Printf("err: DefaultPrintHttpLogInfo fmt.Fprintf:%s\n", err1.Error())
+	}
 }
