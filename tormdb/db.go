@@ -67,7 +67,7 @@ const (
 	LOG_INFO_EXEC_SQL LogName = "LogInfoEXECSQL"
 )
 
-//DefaultPrintLogInfoEXECSQL 默认日志打印函数
+// DefaultPrintLogInfoEXECSQL 默认日志打印函数
 func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName logchan.LogName, err error) {
 	if typeName != LOG_INFO_EXEC_SQL {
 		return
