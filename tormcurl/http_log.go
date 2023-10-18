@@ -93,10 +93,9 @@ func DefaultPrintHttpLogInfo(logInfo logchan.LogInforInterface, typeName logchan
 	if !ok {
 		return
 	}
-	processSessionID := logchan.GetSessionID(httpLogInfo)
 	if err != nil {
-		fmt.Fprintf(logchan.LogWriter, "processSessionID:%s|loginInfo:%s|error:%s\n", processSessionID, httpLogInfo.GetName(), err.Error())
+		fmt.Fprintf(logchan.LogWriter, "%s|loginInfo:%s|error:%s\n", logchan.DefaultPrintLog(httpLogInfo), httpLogInfo.GetName(), err.Error())
 		return
 	}
-	fmt.Fprintf(logchan.LogWriter, "processSessionID:%s|curl:%s|response:%s\n", processSessionID, httpLogInfo.CurlCmd, httpLogInfo.ResponseBody)
+	fmt.Fprintf(logchan.LogWriter, "%s|curl:%s|response:%s\n", logchan.DefaultPrintLog(httpLogInfo), httpLogInfo.CurlCmd, httpLogInfo.ResponseBody)
 }
