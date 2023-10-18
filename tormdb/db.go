@@ -76,11 +76,12 @@ func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName logc
 	if !ok {
 		return
 	}
+	processSessionID := logchan.GetSessionID(logInfoEXECSQL)
 	if err != nil {
-		fmt.Fprintf(logchan.LogWriter, "loginInfo:%s,error:%s", logInfoEXECSQL.GetName(), err.Error())
+		fmt.Fprintf(logchan.LogWriter, "processSessionID:%s|loginInfo:%s|error:%s\n", processSessionID, logInfoEXECSQL.GetName(), err.Error())
 		return
 	}
-	fmt.Fprintf(logchan.LogWriter, "%+s [%s rows:%d]", logInfoEXECSQL.SQL, logInfoEXECSQL.Duration, logInfoEXECSQL.AffectedRows)
+	fmt.Fprintf(logchan.LogWriter, "processSessionID:%s|SQL%+s [%s rows:%d]\n", processSessionID, logInfoEXECSQL.SQL, logInfoEXECSQL.Duration, logInfoEXECSQL.AffectedRows)
 }
 
 var DriverName = "mysql"
