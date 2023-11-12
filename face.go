@@ -45,16 +45,30 @@ func ExecSQLTpl(ctx context.Context, sqlTplIdentify string, tplName string, volu
 	if err != nil {
 		return err
 	}
+
+	sqls, _, _, err := getSQL(sqlTplInstance.GetTemplate(), tplName, volume)
+	if err != nil {
+		return err
+	}
+	err = ExecSQL(ctx, sqlTplIdentify, sqls, out)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ExecSQL 执行sql语句
+func ExecSQL(ctx context.Context, sqlTplIdentify string, sql string, out interface{}) (err error) {
+	sqlTplInstance, err := GetSQLTpl(sqlTplIdentify)
+	if err != nil {
+		return err
+	}
 	dbExecutor := sqlTplInstance.GetDBExecutor()
 	if dbExecutor == nil {
 		err = tormsql.ERROR_DB_EXECUTOR_REQUIRD
 		return err
 	}
-	sqls, _, _, err := getSQL(sqlTplInstance.GetTemplate(), tplName, volume)
-	if err != nil {
-		return err
-	}
-	err = dbExecutor.ExecOrQueryContext(ctx, sqls, out)
+	err = dbExecutor.ExecOrQueryContext(ctx, sql, out)
 	if err != nil {
 		return err
 	}
