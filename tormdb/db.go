@@ -77,7 +77,7 @@ func DefaultPrintLogInfoEXECSQL(logInfo logchan.LogInforInterface, typeName logc
 		return
 	}
 	if err != nil {
-		_, err1 := fmt.Fprintf(logchan.LogWriter, "%s|loginInfo:%s|error:%s\n", logchan.DefaultPrintLog(logInfoEXECSQL), logInfoEXECSQL.GetName(), err.Error())
+		_, err1 := fmt.Fprintf(logchan.LogWriter, "%s|loginInfo:%s|error:%s\n", logchan.DefaultPrintLog(logInfoEXECSQL), logInfoEXECSQL.SQL, err.Error())
 		if err1 != nil {
 			fmt.Printf("err: DefaultPrintLogInfoEXECSQL fmt.Fprintf:%s\n", err1.Error())
 		}
